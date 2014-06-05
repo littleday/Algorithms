@@ -1,15 +1,16 @@
 #include <stdio.h> 
 #include <stdlib.h>
-#define N 6;
+#define N 7;
 /* Adjacency list node */
 struct AdjNode{
-	int dest;
+	int id;
+	//int data; 
 	struct AdjNode *next;
 };
 
 /* AdjList*/
 struct AdjList{
-	struct AdjNode * head;
+	struct AdjNode *head;
 };
 
 struct Graph{
@@ -26,17 +27,20 @@ struct Graph* createGraph( int number ){
 	int i;
 	for (i = 0; i < number; ++i)
 	{
-		newGraph->vertexs[i].head = NULL;
+		struct AdjNode *vertexNode = (struct AdjNode*)malloc(sizeof(struct AdjNode));
+		vertexNode->id = i + 1;
+		vertexNode->next = NULL;
+		newGraph->vertexs[i].head = vertexNode;
 	}
     return newGraph;
 };
 
 /* Add Node */
-struct AdjNode* addNode (int dest)
+struct AdjNode* addNode (int id)
 {
 	struct AdjNode *newNode;
 	newNode = (struct AdjNode*)malloc(sizeof(newNode));
-	newNode->dest = dest;
+	newNode->id = id;
 	newNode->next = NULL;
     return newNode;
 };
@@ -45,28 +49,33 @@ struct AdjNode* addNode (int dest)
 
 void addEdge(int src, int dest, struct Graph* newGraph){
 	struct AdjNode *newNode = addNode(dest);
-	newNode->next = newGraph->vertexs[src].head;
-	newGraph->vertexs[src].head = newNode;
+	struct AdjNode *temp;
+	temp = newGraph->vertexs[src-1].head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newNode;
+	// undirected graph
 	newNode = addNode(src);
-	newNode->next = newGraph->vertexs[dest].head;
-	newGraph->vertexs[dest].head = newNode;
+	temp = newGraph->vertexs[dest-1].head;
+	while(temp->next != NULL)
+	{
+		temp = temp->next;
+	}
+	temp->next = newNode;
 }
 /* Depth first search */
 void dfsTraverse(struct Graph*graph, int vertex, int visited[]){
-	int number = graph->number;
 	visited[vertex] = 1;
-	printf("Current vertex is: %d\n", vertex);
-	int i;
-	for (i = 0; i < number; ++i)
+	printf("Current vertex is: %d\n", vertex+1);
+	struct AdjNode * newNode = graph->vertexs[vertex].head;
+	while(newNode->next != NULL)
 	{
-		struct AdjNode * newNode = graph->vertexs[vertex].head;
-		while (newNode != NULL)
+		newNode = newNode->next;
+		if ( visited[newNode->id - 1] == 0 )
 		{
-			if (newNode->dest ==  i && visited[i] == 0)
-			{
-				dfsTraverse(graph, i, visited);
-			}
-			newNode = newNode->next;
+			dfsTraverse(graph, newNode->id - 1, visited);
 		}
 	}
 }
@@ -93,8 +102,10 @@ struct Queue *rear = NULL;
 
 void enQueue(struct AdjNode *node)
 {
-	if (front == NULL)
+	if (front == NULL || rear == NULL)
 	{
+		front = (struct Queue*)malloc(sizeof(front));
+		rear = (struct Queue*)malloc(sizeof(rear));
 		front->node = node;
 		front->next = NULL;
 		rear = front;
@@ -103,7 +114,7 @@ void enQueue(struct AdjNode *node)
 	{
 		struct Queue *newMember = (struct Queue*)malloc(sizeof(newMember));
 		newMember->node = node;
-		newMember->next =NULL;
+		newMember->next = NULL;
 		struct Queue *temp;
 		temp = front;
 		while (temp->next!= NULL)
@@ -132,7 +143,6 @@ void deQueue()
 void bfs(struct Graph*graph){
 	int number = graph->number;
 	int visited[number];
-	//queue<int> q;
 	int i;
 	for (i = 0; i < number; ++i)
 	{
@@ -149,16 +159,17 @@ void bfs(struct Graph*graph){
 			while(front != NULL)
 			{
 				struct AdjNode *temp = front->node;
+				visited[temp->id-1] = 1;
 				while(temp->next != NULL)
 				{
 					temp = temp->next;
-					if(visited[temp->dest] != 1)
+					if(visited[temp->id-1] != 1)
 					{
 						enQueue(temp);
+						visited[temp->id-1] = 1;
 					}
 				}
-				visited[front->node->dest] = 1;
-				printf("Current vertex is: %d\n", front->node->dest);
+				printf("Current vertex is: %d\n", front->node->id);
 				deQueue();
 
 			}
@@ -191,14 +202,15 @@ int main(int argc, char const *argv[])
     for (i = 0; i < vertexs; ++i)
     {
     	struct AdjNode* node = graph->vertexs[i].head;
-    	printf("vertext: %d\n", i);
-    	while(node != NULL)
+    	printf("vertex: %d\n", i+1);
+    	while(node->next != NULL)
     	{
-    		printf("->%d\n", node->dest);
     		node = node->next;
+    		printf("->%d\n", node->id);
     	}
     	printf("\n");
     }
+    printf("DFS: \n");
     int visited[vertexs];
     int m;
     for (m = 0; m < vertexs; m++)
@@ -206,6 +218,7 @@ int main(int argc, char const *argv[])
     	visited[m] = 0;
     }
     dfs(graph, visited);
+    printf("BFS: \n");
     bfs(graph);
     if(line)
     	free(line);
