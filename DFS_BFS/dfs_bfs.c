@@ -1,6 +1,6 @@
 #include <stdio.h> 
 #include <stdlib.h>
-#define N 7;
+#define N 7; // the vertexts' number
 /* Adjacency list node */
 struct AdjNode{
 	int id;

@@ -33,29 +33,27 @@ void addNode( int data )
 NODE *findNode( int location )
 {
 	NODE *targetNode, *temp;
-	int len = 1;
-	temp = head;
-	while ( temp != NULL )
-	{
-		len++;
-		temp = temp->next;
-	}
-	if ( location <= len && location > 0)
+	if (location > 0)
 	{
 		int i;
 		temp = head;
 		for (i=0; i<location; i++)
 		{
 			targetNode = temp;
+			if ( targetNode == NULL )
+			{
+				printf("%s\n", "Boundary is beyound!");
+				break;
+			}
 			temp = temp->next; //Any problems if temp = NULL?
 		}
 	}
 	else
 	{
-		printf("%s\n", "The boundary error!" );
+		printf("%s\n", "Please enter a positive location!" );
 		targetNode = NULL;
 	}
-	free(temp);
+	//printf("pointer is %p\n", temp);
 	return targetNode;
 }
 
@@ -65,12 +63,43 @@ void InsertNode( int data, int location)
 	NODE *newNode, *left, *right;
 	left = findNode(location-1);
 	right = findNode(location);
-	newNode = (NODE *) malloc(sizeof(NODE));
-	newNode->data = data;
-	newNode->next = right;
-	if (left != NULL)
+	if ( left!=NULL && right == NULL )
 	{
+		newNode = (NODE *) malloc(sizeof(NODE));
+		newNode->data = data;
+		newNode->next = NULL;
 		left->next = newNode;
+	}
+	else
+	{
+		newNode = (NODE *) malloc(sizeof(NODE));
+	    newNode->data = data;
+	    newNode->next = right;
+	    if (left != NULL)
+	    {
+		    left->next = newNode;
+	    }
+	}
+
+}
+
+void DeleteNode( int location )
+{
+	NODE *targetNode, *left;
+	targetNode = findNode(location);
+	if ( targetNode == NULL )
+	{
+		printf("%s\n", "No node in current position!");
+	}
+	if ( targetNode->next == NULL )
+	{
+		left = findNode(location-1);
+		left->next = NULL;
+	}
+	else
+	{
+		left = findNode(location-1);
+		left->next = targetNode->next;
 	}
 }
 
@@ -100,27 +129,7 @@ int main(int argc, char const *argv[])
 		addNode(numbers[i]);
 	}
 	DisplayList();
-    
-    int data = 7;
-	NODE *newNode, *left, *right;
-	left = findNode(2);
-	right = findNode(3);
-	printf("the left is %d \n", left->data );
-	printf("the right is %d \n", right->data );
-	newNode = (NODE *) malloc(sizeof(NODE));
-    if (left != NULL)
-	{
-		left->next = newNode;
-	}
-	newNode->data = data;
-	newNode->next = right;
-	printf("the left is %d \n", left->data );
-	printf("the insert is %d \n", left->next->data );
-	printf("the insert is %d \n", newNode->data );
-	printf("the insert is %d \n", newNode->next->data );
-    printf("the right is %d \n", right->data );
-
-	/*
+	
 	int data, location;
 	printf("Please enter a new node value:\n");
 	scanf("%d", &data);
@@ -128,6 +137,8 @@ int main(int argc, char const *argv[])
 	scanf("%d", &location);
 	InsertNode(data, location);
 	DisplayList();
-	*/
+	DeleteNode(2);
+	DisplayList();
+
 	return 0;
 }
