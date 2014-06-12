@@ -6,7 +6,7 @@
 ***/
 #include <stdio.h> 
 #include <stdlib.h>
-#define N 6; // vertexs' number
+#define N 5; // vertexs' number
 
 /*** Implement Graph using adjancent linked list ***/
 
@@ -111,8 +111,8 @@ void prim(struct Graph*graph, int beginner)
                 }
                 if (flag == 0)
                 {
-                    records[i][temp->id-1] = temp->weight;
-                    printf("Add %d to %d with weight %d to record table:\n", i+1, temp->id, temp->weight);
+                    records[solved[i]-1][temp->id-1] = temp->weight;
+                    printf("Add %d to %d with weight %d to record table:\n", solved[i], temp->id, temp->weight);
                 }
             }
 
@@ -125,11 +125,14 @@ void prim(struct Graph*graph, int beginner)
         {
             for (k = 0; k < number; ++k)
             {
-                if (records[j][k] < temp_path)
+                if (records[j][k] != 0)
                 {
-                    temp_begin = j + 1;
-                    temp_end = k + 1;
-                    temp_path = records[j][k];
+                    if (records[j][k] < temp_path)
+                    {
+                        temp_begin = j + 1;
+                        temp_end = k + 1;
+                        temp_path = records[j][k];
+                    }
                 }
             }
         }
@@ -140,7 +143,7 @@ void prim(struct Graph*graph, int beginner)
         int x;
         for ( x= 0; x< size; x++)
         {
-            printf("Test: solved[x]:\n");
+            printf("Test: %d\n", solved[x]);
         }
     }
 }
