@@ -130,7 +130,7 @@ void kruskal(struct Graph* graph)
             }
         }
         //printf("Current vertexs are %d and %d with weight %d\n", temp_begin, temp_end, temp_weight);
-        printf("Is%d and %d\n",solved[temp_begin-1], solved[temp_end-1]);
+        //printf("Is%d and %d\n",solved[temp_begin-1], solved[temp_end-1]);
         if (solved[temp_begin-1] == 0 && solved[temp_end-1] == 0)
         {
             solved[temp_begin-1] = 1;
@@ -141,26 +141,30 @@ void kruskal(struct Graph* graph)
             size++;
             printf("This edge weight is %d\n", temp_weight);
             records[temp_begin-1][temp_end-1] = 0;
+            records[temp_end-1][temp_begin-1] = 0;
         }
         else
         {
             if (solved[temp_begin-1] == 0)
             {
                 solved[temp_begin-1] = 1;
-                printf("One Vertex %d is \n", temp_begin-1);
+                printf("One Vertex %d is \n", temp_begin);
                 size++;
-                printf("One Vertex %d is \n", temp_end-1);
+                printf("One Vertex %d is \n", temp_end);
                 printf("This edge weight is %d\n", temp_weight);
                 records[temp_begin-1][temp_end-1] = 0;
+                records[temp_end-1][temp_begin-1] = 0;
+
             }
             if (solved[temp_end-1] == 0)
             {
                 solved[temp_end-1] = 1;
-                printf("One Vertex %d is \n", temp_begin-1);
-                printf("One Vertex %d is \n", temp_end-1);
+                printf("One Vertex %d is \n", temp_begin);
+                printf("One Vertex %d is \n", temp_end);
                 size++;
                 printf("This edge weight is %d\n", temp_weight);
                 records[temp_begin-1][temp_end-1] = 0;
+                records[temp_end-1][temp_begin-1] = 0;
             }
         }
 
