@@ -44,15 +44,15 @@ void insert(struct node **tree_pp, struct node *newNode_p)
     }
 }
 //search
-int search(struct node **tree_pp, int key)
+struct node* search(struct node **tree_pp, int key)
 {
     if ((tree_pp) == NULL)
     {
-        return -1;
+        return NULL;
     }
     if ((*tree_pp) == NULL)
     {
-        return 0;
+        return NULL;
     }
     else
     {
@@ -66,13 +66,13 @@ int search(struct node **tree_pp, int key)
         }
         if ((*tree_pp)->key == key)
         {
-            return 1;
+            return (*tree_pp);
         }
-        return 0;
+        return NULL;
 
     }
 }
-// Delete
+
 // Print the tree
 void printTree(struct node** tree_pp){
     if ((tree_pp) != NULL)
@@ -103,7 +103,7 @@ int main(int argc, char const *argv[])
         insert(&tree_p, newNode_p);
     }
     printTree(&tree_p);
-    if (search(&tree_p, 12) == 1)
+    if (search(&tree_p, 5) != NULL)
     {
         printf("Find it\n");
     }
